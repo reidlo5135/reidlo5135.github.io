@@ -1,0 +1,75 @@
+---
+import Icon from "./Icon.astro";
+import type { IconName } from "./Icon.astro";
+
+interface Props {
+    readonly id?: string;
+    readonly icon?: IconName;
+    readonly title?: string;
+    /** Small text at the right of the heading, such as a count. */
+    readonly aside?: string;
+}
+
+const { id, icon, title, aside }: Props = Astro.props;
+---
+
+<section class="panel" id={id}>
+    {
+        title && (
+            <header>
+                <h2>
+                    {icon && (
+                        <span class="badge">
+                            <Icon name={icon} />
+                        </span>
+                    )}
+                    {title}
+                </h2>
+                {aside && <span class="label">{aside}</span>}
+            </header>
+        )
+    }
+    <slot />
+</section>
+
+<style>
+    .panel {
+        padding: 28px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        background: var(--surface);
+        scroll-margin-top: 24px;
+    }
+
+    header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+
+    h2 {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin: 0;
+        font-size: 19px;
+    }
+
+    .badge {
+        display: grid;
+        place-items: center;
+        width: 32px;
+        height: 32px;
+        border-radius: 9px;
+        background: var(--brand-soft);
+        color: var(--brand);
+    }
+
+    @media (max-width: 640px) {
+        .panel {
+            padding: 20px;
+        }
+    }
+</style>

@@ -1,83 +1,397 @@
 ---
 import type { CollectionEntry } from "astro:content";
 import Base from "../layouts/Base.astro";
+import Icon from "./Icon.astro";
+import Panel from "./Panel.astro";
 import ProjectCard from "./ProjectCard.astro";
 import type { Lang } from "../i18n";
-import { SITE, SKILLS, STRINGS, homePath } from "../i18n";
+import { STRINGS, homePath } from "../i18n";
+import type { Career, Education, Localized, SkillGroup, Strength } from "../profile";
+import { CAREER, EDUCATION, INTRO, PROFILE, SKILL_GROUPS, STRENGTHS } from "../profile";
 import { projectsIn } from "../projects";
+import type { Repo, RepoCategory } from "../repos";
+import { CATEGORIES, REPOS, describe, reposIn, rosSince } from "../repos";
 
 interface Props {
     readonly lang: Lang;
 }
 
+interface Stat {
+    readonly value: string;
+    readonly label: string;
+}
+
 const { lang }: Props = Astro.props;
 const t = STRINGS[lang];
 const projects: CollectionEntry<"projects">[] = await projectsIn(lang);
+const rosCount: number = REPOS.filter(
+    (repo: Repo) => repo.category === "ros2-package" || repo.category === "ros-bridge-library",
+).length;
+const stats: readonly Stat[] = [
+    { value: String(REPOS.length), label: t.statRepos },
+    { value: String(rosCount), label: t.statRos },
+    { value: String(projects.length), label: t.statFeatured },
+    { value: rosSince(), label: t.statSince },
+];
 ---
 
-<Base lang={lang} title={t.title} description={t.intro} otherPath={homePath(lang === "ko" ? "en" : "ko")}>
-    <section class="hero">
-        <p class="label">ROBOTICS TOOLING · ROS 2 · FULL STACK</p>
-        <h1>{t.tagline}</h1>
-        <p class="intro">{t.intro}</p>
-    </section>
+<Base lang={lang} title={t.title} description={PROFILE.bio[lang]} otherPath={homePath(lang === "ko" ? "en" : "ko")}>
+    <Panel id="about">
+        <p class="label eyebrow">ROBOTICS TOOLING · ROS 2 · FULL STACK</p>
+        <h1>{t.greeting}</h1>
+        {INTRO[lang].map((line: string) => <p class="intro">{line}</p>)}
+        <ul class="stats">
+            {
+                stats.map((stat: Stat) => (
+                    <li>
+                        <strong>{stat.value}</strong>
+                        <span>{stat.label}</span>
+                    </li>
+                ))
+            }
+        </ul>
+    </Panel>
 
-    <section id="projects">
-        <h2>{t.projects}</h2>
+    <Panel icon="layers" title={t.strengths}>
+        <ul class="strengths">
+            {
+                STRENGTHS.map((strength: Strength) => (
+                    <li>
+                        <span class="badge">
+                            <Icon name={strength.icon} size={18} />
+                        </span>
+                        <h3>{strength.title[lang]}</h3>
+                        <p>{strength.body[lang]}</p>
+                    </li>
+                ))
+            }
+        </ul>
+    </Panel>
+
+    {
+        CAREER.length > 0 && (
+            <Panel id="career" icon="briefcase" title={t.career}>
+                <ol class="timeline">
+                    {CAREER.map((career: Career) => (
+                        <li>
+                            <div class="when label">{career.period}</div>
+                            <div>
+                                <h3>{career.company[lang]}</h3>
+                                <p class="sub">{career.role[lang]}</p>
+                                <ul class="points">
+                                    {career.points.map((point: Localized) => (
+                                        <li>{point[lang]}</li>
+                                    ))}
+                                </ul>
+                            </div>
+                        </li>
+                    ))}
+                </ol>
+                {EDUCATION.length > 0 && (
+                    <>
+                        <h3 class="label subhead">{t.education}</h3>
+                        <ol class="timeline">
+                            {EDUCATION.map((education: Education) => (
+                                <li>
+                                    <div class="when label">{education.period}</div>
+                                    <div>
+                                        <h3>{education.school[lang]}</h3>
+                                        <p class="sub">{education.degree[lang]}</p>
+                                    </div>
+                                </li>
+                            ))}
+                        </ol>
+                    </>
+                )}
+            </Panel>
+        )
+    }
+
+    <Panel id="projects" icon="folder" title={t.projects} aside={String(projects.length)}>
         <ul class="grid">
             {projects.map((project: CollectionEntry<"projects">) => <ProjectCard lang={lang} project={project} />)}
         </ul>
-    </section>
+    </Panel>
 
-    <section id="about">
-        <h2>{t.about}</h2>
-        {t.aboutBody.map((line: string) => <p>{line}</p>)}
-        <h3 class="label">{t.skills}</h3>
-        <ul class="chips">
-            {SKILLS.map((skill: string) => <li>{skill}</li>)}
-        </ul>
-        <h3 class="label">{t.contact}</h3>
-        <p><a href={SITE.github}>github.com/reidlo5135</a></p>
-    </section>
+    {
+        REPOS.length > 0 && (
+            <Panel id="repos" icon="layers" title={t.repos} aside={String(REPOS.length)}>
+                {CATEGORIES.filter((category: { key: RepoCategory }) => reposIn(category.key).length > 0).map(
+                    (category: { key: RepoCategory; title: Localized }) => (
+                        <details open={category.key !== "study"}>
+                            <summary>
+                                <span>{category.title[lang]}</span>
+                                <span class="label">{reposIn(category.key).length}</span>
+                            </summary>
+                            <ul class="repos">
+                                {reposIn(category.key).map((repo: Repo) => (
+                                    <li>
+                                        <a href={`https://github.com/reidlo5135/${repo.name}`}>
+                                            <span class="repo-name mono">{repo.name}</span>
+                                            <span class="repo-desc">{describe(repo, lang)}</span>
+                                            <span class="repo-meta label">
+                                                {repo.language} · {repo.created.slice(0, 4)}
+                                            </span>
+                                        </a>
+                                    </li>
+                                ))}
+                            </ul>
+                        </details>
+                    ),
+                )}
+            </Panel>
+        )
+    }
+
+    <Panel id="skills" icon="code" title={t.skills}>
+        <div class="skills">
+            {
+                SKILL_GROUPS.map((group: SkillGroup) => (
+                    <div>
+                        <h3 class="label">{group.title[lang]}</h3>
+                        <ul class="chips">
+                            {group.items.map((item: string) => (
+                                <li>{item}</li>
+                            ))}
+                        </ul>
+                    </div>
+                ))
+            }
+        </div>
+    </Panel>
 </Base>
 
 <style>
-    .hero {
-        padding-block: 48px 56px;
+    .eyebrow {
+        margin: 0;
+        color: var(--brand);
     }
 
     h1 {
-        margin: 8px 0 16px;
-        font-size: clamp(30px, 5vw, 44px);
+        margin: 10px 0 18px;
+        font-size: clamp(28px, 4vw, 40px);
+        letter-spacing: -0.02em;
     }
 
     .intro {
-        max-width: 640px;
+        max-width: 720px;
+        margin: 0 0 12px;
+        color: var(--muted);
+        font-size: 16px;
+    }
+
+    .stats {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px;
+        margin: 24px 0 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    .stats li {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        padding: 16px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        background: var(--surface-2);
+    }
+
+    .stats strong {
+        font-family: var(--mono);
+        font-size: 26px;
+        font-weight: 600;
+        color: var(--text);
+    }
+
+    .stats span {
+        color: var(--muted);
+        font-size: 13px;
+    }
+
+    .strengths {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    .strengths li {
+        padding: 18px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        background: var(--surface-2);
+    }
+
+    .badge {
+        display: grid;
+        place-items: center;
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        background: var(--brand-soft);
+        color: var(--brand);
+    }
+
+    .strengths h3 {
+        margin: 14px 0 6px;
+        font-size: 16px;
+    }
+
+    .strengths p {
         margin: 0;
         color: var(--muted);
-        font-size: 18px;
+        font-size: 14px;
+        line-height: 1.65;
     }
 
-    section + section {
-        margin-top: 56px;
+    .timeline {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
     }
 
-    h2 {
-        margin: 0 0 20px;
-        font-size: 24px;
+    .timeline > li {
+        display: grid;
+        grid-template-columns: 150px minmax(0, 1fr);
+        gap: 16px;
+        padding-left: 16px;
+        border-left: 2px solid var(--border);
     }
 
-    h3.label {
-        margin: 28px 0 10px;
+    .timeline h3 {
+        margin: 0;
+        font-size: 16px;
+    }
+
+    .sub {
+        margin: 2px 0 6px;
+        color: var(--brand);
+        font-size: 14px;
+    }
+
+    .points {
+        margin: 0;
+        padding-left: 18px;
+        color: var(--muted);
+        font-size: 14px;
+    }
+
+    .subhead {
+        margin: 28px 0 14px;
         font-weight: 500;
     }
 
     .grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(min(100%, 380px), 1fr));
-        gap: 16px;
+        grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+        gap: 14px;
         margin: 0;
         padding: 0;
         list-style: none;
+    }
+
+    details + details {
+        margin-top: 8px;
+    }
+
+    summary {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 12px;
+        border-radius: var(--radius);
+        background: var(--surface-2);
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .repos {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
+        gap: 8px;
+        margin: 10px 0 4px;
+        padding: 0;
+        list-style: none;
+    }
+
+    .repos a {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        height: 100%;
+        padding: 12px 14px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        color: inherit;
+        text-decoration: none;
+        transition: border-color 0.15s;
+    }
+
+    .repos a:hover,
+    .repos a:focus-visible {
+        border-color: var(--brand);
+    }
+
+    .repo-name {
+        color: var(--text);
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    /* Three lines on the card; the whole sentence is on GitHub. */
+    .repo-desc {
+        display: -webkit-box;
+        overflow: hidden;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 3;
+        line-clamp: 3;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.55;
+    }
+
+    .repo-meta {
+        margin-top: auto;
+        font-size: 12px;
+    }
+
+    .skills {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 20px;
+    }
+
+    .skills h3 {
+        margin: 0 0 10px;
+        font-weight: 500;
+    }
+
+    @media (max-width: 900px) {
+        .stats {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .strengths {
+            grid-template-columns: minmax(0, 1fr);
+        }
+    }
+
+    @media (max-width: 640px) {
+        .timeline > li {
+            grid-template-columns: minmax(0, 1fr);
+            gap: 4px;
+        }
+
+        .skills {
+            grid-template-columns: minmax(0, 1fr);
+        }
     }
 </style>

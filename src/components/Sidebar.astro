@@ -1,0 +1,242 @@
+---
+import Icon from "./Icon.astro";
+import type { IconName } from "./Icon.astro";
+import type { Lang } from "../i18n";
+import { STRINGS, homePath } from "../i18n";
+import type { Link } from "../profile";
+import { CAREER, LINKS, PROFILE } from "../profile";
+
+interface Props {
+    readonly lang: Lang;
+    /** The same page in the other language. */
+    readonly otherPath: string;
+}
+
+interface NavItem {
+    readonly id: string;
+    readonly label: string;
+    readonly icon: IconName;
+}
+
+const { lang, otherPath }: Props = Astro.props;
+const t = STRINGS[lang];
+const home: string = homePath(lang);
+const nav: readonly NavItem[] = [
+    { id: "about", label: t.about, icon: "user" },
+    ...(CAREER.length > 0 ? [{ id: "career", label: t.career, icon: "briefcase" } as const] : []),
+    { id: "projects", label: t.projects, icon: "folder" },
+    { id: "repos", label: t.repos, icon: "layers" },
+    { id: "skills", label: t.skills, icon: "code" },
+];
+---
+
+<aside class="sidebar">
+    <div class="profile">
+        <img class="avatar" src={PROFILE.avatar} alt="" width="88" height="88" loading="eager" />
+        <div>
+            <p class="name"><a href={home}>{PROFILE.name[lang]}</a></p>
+            <p class="role">{PROFILE.role[lang]}</p>
+        </div>
+    </div>
+    <p class="bio">{PROFILE.bio[lang]}</p>
+    <ul class="facts">
+        <li><Icon name="building" /> {PROFILE.company[lang]}</li>
+        <li><Icon name="pin" /> {PROFILE.location[lang]}</li>
+    </ul>
+
+    <nav aria-label={t.menu}>
+        <ul>
+            {
+                nav.map((item: NavItem) => (
+                    <li>
+                        <a href={`${home}#${item.id}`}>
+                            <Icon name={item.icon} /> {item.label}
+                        </a>
+                    </li>
+                ))
+            }
+        </ul>
+    </nav>
+
+    <div class="foot">
+        <ul class="links">
+            {
+                LINKS.map((link: Link) => (
+                    <li>
+                        <a href={link.href} aria-label={link.label}>
+                            <Icon name={link.icon} size={18} />
+                        </a>
+                    </li>
+                ))
+            }
+        </ul>
+        <a class="lang" href={otherPath} hreflang={lang === "ko" ? "en" : "ko"}>
+            <Icon name="globe" /> {t.otherLang}
+        </a>
+    </div>
+</aside>
+
+<style>
+    .sidebar {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        padding: 28px 24px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        background: var(--surface);
+    }
+
+    .profile {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .avatar {
+        flex: none;
+        width: 72px;
+        height: 72px;
+        border-radius: 50%;
+        border: 1px solid var(--border);
+        object-fit: cover;
+    }
+
+    .name {
+        margin: 0;
+        font-size: 20px;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+    }
+
+    .name a {
+        color: var(--text);
+        text-decoration: none;
+    }
+
+    .role {
+        margin: 2px 0 0;
+        color: var(--brand);
+        font-family: var(--mono);
+        font-size: 13px;
+    }
+
+    .bio {
+        margin: 0;
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.65;
+    }
+
+    ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    .facts {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        font-size: 14px;
+    }
+
+    .facts li {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--muted);
+    }
+
+    nav {
+        padding-top: 16px;
+        border-top: 1px solid var(--border);
+    }
+
+    nav ul {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+
+    nav a {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 8px 10px;
+        border-radius: 8px;
+        color: var(--muted);
+        font-size: 15px;
+        text-decoration: none;
+        transition:
+            background 0.15s,
+            color 0.15s;
+    }
+
+    nav a:hover,
+    nav a:focus-visible {
+        background: var(--brand-soft);
+        color: var(--text);
+    }
+
+    .foot {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-top: auto;
+        padding-top: 16px;
+        border-top: 1px solid var(--border);
+    }
+
+    .links {
+        display: flex;
+        gap: 4px;
+    }
+
+    .links a {
+        display: grid;
+        place-items: center;
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        color: var(--muted);
+    }
+
+    .links a:hover,
+    .links a:focus-visible {
+        background: var(--brand-soft);
+        color: var(--brand);
+    }
+
+    .lang {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: var(--muted);
+        font-size: 13px;
+        text-decoration: none;
+    }
+
+    .lang:hover {
+        color: var(--text);
+    }
+
+    /* Phone and tablet: the card sits on top and the menu becomes a row that scrolls. */
+    @media (max-width: 1023px) {
+        .sidebar {
+            gap: 16px;
+            padding: 20px;
+        }
+
+        nav ul {
+            flex-direction: row;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        nav a {
+            white-space: nowrap;
+        }
+    }
+</style>

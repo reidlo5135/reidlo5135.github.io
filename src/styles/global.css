@@ -2,14 +2,16 @@
 @import url("https://fonts.googleapis.com/css2?family=Ubuntu+Sans+Mono:wght@400;500;600&display=swap");
 
 :root {
-    --bg: #0b0e10;
-    --surface: #12161a;
-    --border: #232b32;
+    --bg: #090c0e;
+    --surface: #101418;
+    --surface-2: #161b20;
+    --border: #212930;
     --text: #e9eef1;
     --muted: #93a0a9;
     --brand: #04b8e1;
-    --brand-soft: rgba(4, 184, 225, 0.13);
+    --brand-soft: rgba(4, 184, 225, 0.12);
     --radius: 10px;
+    --radius-lg: 16px;
     --sans: "Pretendard Variable", Pretendard, system-ui, sans-serif;
     --mono: "Ubuntu Sans Mono", ui-monospace, monospace;
     color-scheme: dark;
@@ -17,9 +19,10 @@
 
 @media (prefers-color-scheme: light) {
     :root {
-        --bg: #ffffff;
-        --surface: #f3f5f6;
-        --border: #d5dbdf;
+        --bg: #f4f6f7;
+        --surface: #ffffff;
+        --surface-2: #f4f6f7;
+        --border: #dde2e5;
         --text: #1d2327;
         --muted: #5b666e;
         --brand: #037b96;
@@ -62,11 +65,6 @@ h3 {
 code,
 .mono {
     font-family: var(--mono);
-}
-
-.wrap {
-    width: min(100% - 32px, 880px);
-    margin-inline: auto;
 }
 
 .label {
