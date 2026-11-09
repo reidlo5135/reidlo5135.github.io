@@ -1,0 +1,61 @@
+---
+// Draws every ```mermaid block on the page - ERDs, data flows, sequences - in the site's colors.
+// Loaded only when a page has one, from the CDN, so pages without diagrams carry no script.
+---
+
+<script>
+    // Astro leaves excluded languages as <pre><code class="language-mermaid">.
+    const blocks: HTMLElement[] = Array.from(document.querySelectorAll<HTMLElement>("pre > code.language-mermaid")).map(
+        (code: HTMLElement): HTMLElement => code.parentElement as HTMLElement,
+    );
+
+    if (blocks.length > 0) {
+        const dark: boolean = window.matchMedia("(prefers-color-scheme: dark)").matches;
+        const { default: mermaid } = await import(
+            /* @vite-ignore */ "https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.esm.min.mjs"
+        );
+        mermaid.initialize({
+            startOnLoad: false,
+            theme: "base",
+            fontFamily: '"Pretendard Variable", Pretendard, system-ui, sans-serif',
+            themeVariables: dark
+                ? {
+                      background: "#0b0e10",
+                      primaryColor: "#12161a",
+                      primaryBorderColor: "#04b8e1",
+                      primaryTextColor: "#e9eef1",
+                      lineColor: "#93a0a9",
+                      secondaryColor: "#1a2026",
+                      tertiaryColor: "#12161a",
+                  }
+                : {
+                      background: "#ffffff",
+                      primaryColor: "#f3f5f6",
+                      primaryBorderColor: "#037b96",
+                      primaryTextColor: "#1d2327",
+                      lineColor: "#5b666e",
+                      secondaryColor: "#e8ecee",
+                      tertiaryColor: "#f3f5f6",
+                  },
+        });
+        for (const pre of blocks) {
+            const figure: HTMLElement = document.createElement("figure");
+            figure.className = "diagram mermaid";
+            figure.textContent = pre.textContent ?? "";
+            pre.replaceWith(figure);
+        }
+        await mermaid.run({ querySelector: "figure.mermaid" });
+    }
+</script>
+
+<style is:global>
+    figure.diagram {
+        margin: 24px 0;
+        padding: 16px;
+        overflow-x: auto;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        background: var(--surface);
+        text-align: center;
+    }
+</style>

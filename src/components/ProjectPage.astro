@@ -2,6 +2,7 @@
 import type { CollectionEntry } from "astro:content";
 import { render } from "astro:content";
 import Base from "../layouts/Base.astro";
+import Mermaid from "./Mermaid.astro";
 import type { Lang } from "../i18n";
 import { STRINGS, homePath, projectPath } from "../i18n";
 import { slugOf } from "../projects";
@@ -56,6 +57,7 @@ const { Content } = await render(project);
             <Content />
         </div>
     </article>
+    <Mermaid />
 </Base>
 
 <style>
