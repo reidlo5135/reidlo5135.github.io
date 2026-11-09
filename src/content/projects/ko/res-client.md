@@ -10,8 +10,6 @@ parent: res
 tab: 화면 설계
 ---
 
-[//]: # "채울 것: 현재 UI 캡처. 런처 · 대시보드 · 원격 운전 콕핏 · 경로 & 태스크 · 설정(Form/YAML) · 월드 편집기, 라이트 · 다크"
-
 RES 의 화면은 로봇 여러 대를 다루는 계기판이다. 글씨는 작고, 패널은 촘촘하고, 프레임은 카드보다 도면에 가깝다. 이 페이지는 그 화면을 어떤 원칙으로 정했는지, 어떤 토큰으로 그렸는지, 화면마다 무엇이 어디에 있고 어떻게 움직이는지를 정리한다.
 
 기준은 `@res/app` 0.19.1 의 코드다. 예전 기획 문서와 코드가 다른 곳은 코드를 따랐다.
@@ -213,7 +211,13 @@ flowchart LR
 
 ### 런처 — `/home`
 
-[//]: # "채울 것: 런처 캡처 (로봇 3대 이상, 하나는 Attention 상태)"
+<figure>
+<picture>
+<source media="(prefers-color-scheme: light)" srcset="/projects/res/launcher-light.webp">
+<img src="/projects/res/launcher-dark.webp" alt="함대 런처" width="2160" height="1350" loading="lazy">
+</picture>
+<figcaption>함대 런처 — 로봇 7대 가운데 2대가 주행 중이고 3대는 연결이 끊겨 주의 목록에 올라 있다. 가운데 지도에는 고른 로봇과 같은 지도의 다른 로봇이 함께 보인다. 캡처는 시뮬레이션 로봇으로 찍었고, 로봇 · 월드 이름과 주소 일부는 공개용으로 바꿨다.</figcaption>
+</figure>
 
 등록된 로봇이 어떤 상태인지, 무엇을 하고 있는지를 한 화면에 모은다. 로봇은 여기서 고르기만 하고 움직이지 않는다. 세 열이 각각 질문 하나에 답한다. 왼쪽은 어떤 로봇이 있고 어떤 상태인가, 가운데는 고른 로봇이 어디 있는가, 오른쪽은 무엇에 사람이 필요하고 방금 무슨 일이 있었는가.
 
@@ -232,7 +236,13 @@ flowchart LR
 
 ### 대시보드 — `/robot/:id/dashboard`
 
-[//]: # "채울 것: 대시보드 캡처 (주행 중, 3D 뒤따르기 카메라)"
+<figure>
+<picture>
+<source media="(prefers-color-scheme: light)" srcset="/projects/res/dashboard-light.webp">
+<img src="/projects/res/dashboard-dark.webp" alt="로봇 대시보드" width="2160" height="1350" loading="lazy">
+</picture>
+<figcaption>로봇 대시보드 — 경로 주행 중인 로봇. 2D SLAM 지도와 3D 월드를 나란히 놓고, 아래에 텔레메트리 차트 6개.</figcaption>
+</figure>
 
 로봇 한 대를 시운전하는 콘솔이다. 2D 지도와 3D 월드에 로봇 · 경로 · 센서를 같이 그리고, 주행을 시작하고 멈춘다.
 
@@ -272,7 +282,10 @@ stateDiagram-v2
 
 ### 원격 운전 — `/robot/:id/teleop`
 
-[//]: # "채울 것: 콕핏 캡처 (D 기어, 주행 중) + 거절된 변속이 튕기는 짧은 GIF"
+<figure>
+<img src="/projects/res/teleop.webp" alt="원격 운전 콕핏" width="2160" height="1350" loading="lazy">
+<figcaption>원격 운전 콕핏 — 기어(P R N D)가 곧 게이트다. P 에서는 속도 명령이 나가지 않는다.</figcaption>
+</figure>
 
 `/cmd_vel` 로 로봇을 직접 운전한다. 측면 도구 열은 없다. 패널 머리도 숨겨서 콕핏에 실제 대시보드만큼의 자리를 준다.
 
@@ -295,9 +308,17 @@ stateDiagram-v2
 - **발행 상태 한 줄:** 미션 잠금 / 스트림 끊김 / 로봇 쪽 거절 / 충돌 감시가 막는 중 / `P — 기어를 넣으면 /cmd_vel 발행 (G)` / `publishing /cmd_vel · 20 Hz`.
 - **잠김:** 미션이 로봇을 쥐고 있으면 조종면이 비활성되고 가운데에 "미션 수행 중 — 자율 주행이 로봇을 잡고 있어 수동 조작이 잠겼습니다" 안내가 뜬다.
 
+<figure>
+<img src="/projects/res/teleop-locked.webp" alt="미션 중 잠긴 콕핏" width="2160" height="1350" loading="lazy">
+<figcaption>미션이 로봇을 잡고 있으면 조종면이 잠기고, 왜 잠겼는지를 가운데에 보여 준다.</figcaption>
+</figure>
+
 ### 경로 & 태스크 — `/robot/:id/route`
 
-[//]: # "채울 것: 경로 편집 캡처 (경로 하나 선택, 노드 표 보이게)"
+<figure>
+<img src="/projects/res/route.webp" alt="경로 편집" width="2160" height="1350" loading="lazy">
+<figcaption>경로 편집 — 노드 97개짜리 경로를 고른 상태. 노드가 지나치게 많으면 지도 위에서 바로 알려 준다.</figcaption>
+</figure>
 
 | 영역 | 크기 | 내용 |
 |---|---|---|
@@ -310,7 +331,15 @@ stateDiagram-v2
 
 ### 설정 — `/robot/:id/config`
 
-[//]: # "채울 것: 설정 캡처 (Form 과 YAML 각각)"
+<figure>
+<img src="/projects/res/config-form.webp" alt="설정 Form 보기" width="2160" height="1350" loading="lazy">
+<figcaption>설정 · Form — 값을 바꾸면 행에 표시가 붙고, 오른쪽 변경 목록에 이전 값 → 새 값이 쌓인다.</figcaption>
+</figure>
+
+<figure>
+<img src="/projects/res/config-yaml.webp" alt="설정 YAML 보기" width="2160" height="1350" loading="lazy">
+<figcaption>설정 · YAML — 같은 변경을 YAML 로 본다. 바뀐 줄 번호에 M 이 붙는다.</figcaption>
+</figure>
 
 ROS 2 파라미터 파일을 폼과 YAML 두 가지로 편집하고, 바꾼 것만 묶어서 적용하는 화면이다. 화면은 다 만들었지만 로봇 쪽 설정 API 가 아직 없다. 그래서 기본 빌드는 fixture 를 읽고, 아래에 STUB 표시를 단다.
 
@@ -326,7 +355,10 @@ ROS 2 파라미터 파일을 폼과 YAML 두 가지로 편집하고, 바꾼 것�
 
 ### 월드 편집기 — `/project/worlds/editor`
 
-[//]: # "채울 것: 월드 편집기 캡처 (split 보기, 높이 확인 진행 중)"
+<figure>
+<img src="/projects/res/world-editor.webp" alt="월드 편집기" width="2160" height="1350" loading="lazy">
+<figcaption>월드 편집기 — 데모 맵을 2D | 3D 분할로 열고 요소 높이를 확정하는 중(10/33). 확정한 요소는 파랑, 추정 높이는 주황.</figcaption>
+</figure>
 
 SLAM 지도(PGM + YAML)에 벽 · 선반 같은 요소와 높이를 달고, 3D 월드(.glb)로 굽는 저작 도구다. 캔버스가 화면을 다 쓰고, 나머지는 모두 그 위에 뜬다. 어떤 패널도 그림을 밀어내지 않는다. 그래서 이 화면은 대시보드 틀을 쓰지 않는다.
 

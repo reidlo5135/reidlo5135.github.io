@@ -10,8 +10,6 @@ parent: res
 tab: Screen design
 ---
 
-[//]: # "TODO: current UI captures of the launcher, dashboard, teleop cockpit, Route & Task, Config (Form and YAML) and the world editor, in light and dark"
-
 RES's screens are an instrument panel for several robots: small type, dense panels, and a frame closer to a drawing than to a card. This page covers the rules the screens follow, the tokens they are drawn with, and what each screen holds, where, and how it behaves.
 
 Everything here is taken from the code of `@res/app` 0.19.1. Where the older planning documents disagree with the code, the code wins.
@@ -213,7 +211,13 @@ flowchart LR
 
 ### Launcher — `/home`
 
-[//]: # "TODO: launcher capture (three or more robots, one in Attention)"
+<figure>
+<picture>
+<source media="(prefers-color-scheme: light)" srcset="/projects/res/launcher-light.webp">
+<img src="/projects/res/launcher-dark.webp" alt="Fleet launcher" width="2160" height="1350" loading="lazy">
+</picture>
+<figcaption>Fleet launcher — of seven robots, two are driving and three have lost their connection and sit in the attention list. The map shows the picked robot together with the others on the same map. Captured against simulated robots; some robot and world names and all addresses were changed for publication.</figcaption>
+</figure>
 
 Every registered robot's state and activity on one screen. Robots are picked here, never driven. Each of the three columns answers one question: the left one says which robots exist and how they are, the centre says where the selected one is, and the right says what needs a person and what just happened.
 
@@ -232,7 +236,13 @@ Every registered robot's state and activity on one screen. Robots are picked her
 
 ### Dashboard — `/robot/:id/dashboard`
 
-[//]: # "TODO: dashboard capture (mid-run, 3D chase camera)"
+<figure>
+<picture>
+<source media="(prefers-color-scheme: light)" srcset="/projects/res/dashboard-light.webp">
+<img src="/projects/res/dashboard-dark.webp" alt="Robot dashboard" width="2160" height="1350" loading="lazy">
+</picture>
+<figcaption>Robot dashboard — a robot running a route. The 2D SLAM map and the 3D world side by side, six telemetry charts below.</figcaption>
+</figure>
 
 The commissioning console for one robot. The robot, its paths and its sensors are drawn on a 2D map and a 3D world, and drives are started and stopped here.
 
@@ -272,7 +282,10 @@ stateDiagram-v2
 
 ### Teleop — `/robot/:id/teleop`
 
-[//]: # "TODO: cockpit capture (in D, moving) and a short GIF of a refused shift kicking back"
+<figure>
+<img src="/projects/res/teleop.webp" alt="Teleop cockpit" width="2160" height="1350" loading="lazy">
+<figcaption>Teleop cockpit — the gear (P R N D) is the gate. Nothing is commanded in P.</figcaption>
+</figure>
 
 Drive the robot by hand over `/cmd_vel`. There are no side toolkits, and panel headers are hidden to give the cockpit the room of a real dashboard.
 
@@ -295,9 +308,17 @@ Drive the robot by hand over `/cmd_vel`. There are no side toolkits, and panel h
 - **Publish line:** mission lock / stream lost / refused by the robot side / collision monitor limiting / `P — 기어를 넣으면 /cmd_vel 발행 (G)` ("in P; shift to publish") / `publishing /cmd_vel · 20 Hz`.
 - **Locked:** while a mission holds the robot, the controls go inert and a centred notice says the mission owns the robot and manual control is locked.
 
+<figure>
+<img src="/projects/res/teleop-locked.webp" alt="Cockpit locked during a mission" width="2160" height="1350" loading="lazy">
+<figcaption>While a mission holds the robot the controls lock, and the reason is shown in the middle.</figcaption>
+</figure>
+
 ### Route & Task — `/robot/:id/route`
 
-[//]: # "TODO: route editor capture (one route selected, node table visible)"
+<figure>
+<img src="/projects/res/route.webp" alt="Route editor" width="2160" height="1350" loading="lazy">
+<figcaption>Route editor — a 97-node route selected. Too many nodes is called out right on the map.</figcaption>
+</figure>
 
 | Region | Size | Contents |
 |---|---|---|
@@ -310,7 +331,15 @@ Drive the robot by hand over `/cmd_vel`. There are no side toolkits, and panel h
 
 ### Config — `/robot/:id/config`
 
-[//]: # "TODO: config captures (Form and YAML)"
+<figure>
+<img src="/projects/res/config-form.webp" alt="Config form view" width="2160" height="1350" loading="lazy">
+<figcaption>Config · Form — an edited value marks its row, and the change list on the right collects old → new.</figcaption>
+</figure>
+
+<figure>
+<img src="/projects/res/config-yaml.webp" alt="Config YAML view" width="2160" height="1350" loading="lazy">
+<figcaption>Config · YAML — the same change seen as YAML. Changed lines carry an M.</figcaption>
+</figure>
 
 Edit ROS 2 parameter files as a form or as YAML, and apply only what changed as one change set. The screen is complete, but the robot-side config API does not exist yet, so the default build reads a fixture and shows a STUB marker in its footer.
 
@@ -326,7 +355,10 @@ Edit ROS 2 parameter files as a form or as YAML, and apply only what changed as 
 
 ### World editor — `/project/worlds/editor`
 
-[//]: # "TODO: world editor capture (split view, height confirmation in progress)"
+<figure>
+<img src="/projects/res/world-editor.webp" alt="World editor" width="2160" height="1350" loading="lazy">
+<figcaption>World editor — the demo map in the 2D | 3D split while element heights are being confirmed (10/33). Confirmed elements are blue, guessed heights orange.</figcaption>
+</figure>
 
 An authoring tool that annotates a SLAM map (PGM + YAML) with walls, shelves and heights, then bakes it into a 3D world (.glb). The canvas takes the whole screen and everything else floats over it; no panel pushes the picture, which is why this screen does not use the dashboard shell.
 

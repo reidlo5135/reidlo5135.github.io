@@ -9,7 +9,13 @@ order: 1
 tab: 개요
 ---
 
-[//]: # "채울 것: 대표 화면 캡처나 녹화 한 장"
+<figure>
+<picture>
+<source media="(prefers-color-scheme: light)" srcset="/projects/res/dashboard-light.webp">
+<img src="/projects/res/dashboard-dark.webp" alt="로봇 대시보드" width="2160" height="1350" loading="lazy">
+</picture>
+<figcaption>로봇 대시보드 — 경로 주행 중인 로봇. 2D SLAM 지도와 3D 월드를 나란히 놓고, 아래에 텔레메트리 차트 6개. 캡처는 시뮬레이션 로봇으로 찍었고, 로봇 · 월드 이름과 주소 일부는 공개용으로 바꿨다.</figcaption>
+</figure>
 
 ## 무엇을 위한 도구인가
 
@@ -23,13 +29,19 @@ tab: 개요
 
 ## 주요 기능
 
-[//]: # "채울 것: 기능마다 새 캡처 한 장씩 — 런처, 대시보드, 원격 운전 콕핏, 월드 편집기"
-
 ### 함대 런처
 
 등록한 로봇 전체를 한 화면에 보여 준다. 왼쪽은 로봇 목록, 가운데는 고른 로봇의 지도 미리보기(같은 지도에 있는 다른 로봇도 함께), 오른쪽은 그 로봇의 상세 · 주의 목록 · 월드 · 최근 주행이다. 런처는 로봇을 움직이지 않는다.
 
 상태 배지는 순서를 정해 판정한다. 신원 충돌이 건강 상태보다 앞서고, 건강 상태가 스트림 연결보다 앞선다. 스트림이 끊긴 것을 로봇이 죽은 것으로 보지 않는다.
+
+<figure>
+<picture>
+<source media="(prefers-color-scheme: light)" srcset="/projects/res/launcher-light.webp">
+<img src="/projects/res/launcher-dark.webp" alt="함대 런처" width="2160" height="1350" loading="lazy">
+</picture>
+<figcaption>함대 런처 — 로봇 7대 가운데 2대가 주행 중이고 3대는 연결이 끊겨 주의 목록에 올라 있다. 가운데 지도에는 고른 로봇과 같은 지도의 다른 로봇이 함께 보인다.</figcaption>
+</figure>
 
 ### 로봇 워크스페이스
 
@@ -47,11 +59,21 @@ tab: 개요
 
 AGV 모드는 노드로 만든 경로를 따라가고, AMR 모드는 목표 지점까지 스스로 길을 찾는다. 테마는 라이트와 다크 둘이다.
 
+<figure>
+<img src="/projects/res/teleop.webp" alt="원격 운전 콕핏" width="2160" height="1350" loading="lazy">
+<figcaption>원격 운전 콕핏 — 기어(P R N D)가 곧 게이트다. P 에서는 속도 명령이 나가지 않는다.</figcaption>
+</figure>
+
 ### SLAM 지도로 3D 월드 만들기
 
 SLAM 지도(PGM + YAML)를 올리고, 잡티를 정리하고, 벽 · 물체를 뽑고 가상 벽은 직접 그린 뒤 높이를 붙인다. 그러면 서버가 `.glb` 3D 월드로 굽는다. 주석은 버전으로 쌓인다.
 
 편집기의 3D 미리보기와 서버의 굽기는 같은 패키지(`@res/world-builder`)를 쓴다. 그래서 미리본 것과 구운 것이 같다. 같은 지도 · 주석 버전 · 빌더 버전이면 바이트까지 같은 `.glb` 가 나오고, 월드는 그 내용으로 주소를 갖는다. 지도를 다시 만들어도 주석을 다시 붙이고, 못 붙인 것은 지우지 않고 따로 돌려준다.
+
+<figure>
+<img src="/projects/res/world-editor.webp" alt="월드 편집기" width="2160" height="1350" loading="lazy">
+<figcaption>월드 편집기 — 데모 맵을 2D | 3D 분할로 열고 요소 높이를 확정하는 중(10/33). 확정한 요소는 파랑, 추정 높이는 주황.</figcaption>
+</figure>
 
 ### 관리 서버
 

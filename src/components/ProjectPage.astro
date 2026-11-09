@@ -156,9 +156,21 @@ const root: CollectionEntry<"projects"> = family[0] ?? project;
     }
 
     .body :global(img) {
+        display: block;
         max-width: 100%;
+        height: auto;
         border: 1px solid var(--border);
         border-radius: var(--radius);
+    }
+
+    .body :global(figure:not(.diagram)) {
+        margin: 20px 0 28px;
+    }
+
+    .body :global(figcaption) {
+        margin-top: 10px;
+        color: var(--muted);
+        font-size: 14px;
     }
 
     /* Wide tables scroll inside the page instead of pushing it sideways. */

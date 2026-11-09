@@ -9,7 +9,13 @@ order: 1
 tab: Overview
 ---
 
-[//]: # "TODO: one hero capture or recording"
+<figure>
+<picture>
+<source media="(prefers-color-scheme: light)" srcset="/projects/res/dashboard-light.webp">
+<img src="/projects/res/dashboard-dark.webp" alt="Robot dashboard" width="2160" height="1350" loading="lazy">
+</picture>
+<figcaption>Robot dashboard — a robot running a route. The 2D SLAM map and the 3D world side by side, six telemetry charts below. Captured against simulated robots; some robot and world names and all addresses were changed for publication.</figcaption>
+</figure>
 
 ## What it is for
 
@@ -23,13 +29,19 @@ The screen definitions name its users: operators, tuning engineers and integrati
 
 ## What it does
 
-[//]: # "TODO: one fresh capture per feature — launcher, dashboard, teleop cockpit, world editor"
-
 ### Fleet launcher
 
 Every registered robot on one screen. The left column lists the robots, the middle previews the selected robot's map (with the other robots on that map), and the right shows its details, an attention list, worlds and recent runs. The launcher never moves a robot.
 
 Status badges follow a fixed order. An identity conflict outranks health, and health outranks the stream connection. A lost stream is not treated as a dead robot.
+
+<figure>
+<picture>
+<source media="(prefers-color-scheme: light)" srcset="/projects/res/launcher-light.webp">
+<img src="/projects/res/launcher-dark.webp" alt="Fleet launcher" width="2160" height="1350" loading="lazy">
+</picture>
+<figcaption>Fleet launcher — of seven robots, two are driving and three have lost their connection and sit in the attention list. The map shows the picked robot together with the others on the same map.</figcaption>
+</figure>
 
 ### Robot workspace
 
@@ -47,11 +59,21 @@ Opening a robot from the launcher leads here. It has seven views.
 
 AGV mode follows a route made of nodes; AMR mode finds its own way to a goal. There are light and dark themes.
 
+<figure>
+<img src="/projects/res/teleop.webp" alt="Teleop cockpit" width="2160" height="1350" loading="lazy">
+<figcaption>Teleop cockpit — the gear (P R N D) is the gate. Nothing is commanded in P.</figcaption>
+</figure>
+
 ### From a SLAM map to a 3D world
 
 Upload a SLAM map (PGM + YAML), clean up the noise, extract walls and objects, draw virtual walls by hand, and give them heights. The server then bakes a `.glb` 3D world. Annotations are kept as versions.
 
 The editor's 3D preview and the server's bake use the same package (`@res/world-builder`), so what you preview is what gets baked. The same map, annotation version and builder version give a byte-identical `.glb`, and worlds are addressed by that content. When a map is re-made, annotations are re-attached; the ones that cannot be matched are handed back, never deleted.
+
+<figure>
+<img src="/projects/res/world-editor.webp" alt="World editor" width="2160" height="1350" loading="lazy">
+<figcaption>World editor — the demo map in the 2D | 3D split while element heights are being confirmed (10/33). Confirmed elements are blue, guessed heights orange.</figcaption>
+</figure>
 
 ### Management server
 
