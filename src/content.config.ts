@@ -13,7 +13,7 @@ const projects = defineCollection({
         kind: z.enum(["personal", "work"]),
         stack: z.array(z.string()),
         order: z.number(),
-        links: z.array(z.object({ label: z.string(), href: z.string().url() })).default([]),
+        links: z.array(z.object({ label: z.string(), href: z.url() })).default([]),
         draft: z.boolean().default(false),
     }),
 });
