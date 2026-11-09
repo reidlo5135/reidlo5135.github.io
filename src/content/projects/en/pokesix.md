@@ -11,7 +11,7 @@ links:
     href: https://github.com/reidlo5135/PokeSix
 ---
 
-<!-- TODO: party analysis screenshot -->
+[//]: # "TODO: party analysis screenshot"
 
 ## What it is
 
@@ -21,4 +21,4 @@ A tool to keep open while replaying the series in order: the Pokédex, type anal
 
 The first version was a Qt 6 / C++20 desktop app, released up to v0.5.1. To run the same app on the web, desktop and mobile, I am rebuilding it from scratch in TypeScript and React. The Qt version stays under the `qt6-final` tag and in Releases.
 
-<!-- TODO: what using both stacks taught me -->
+[//]: # "TODO: what using both stacks taught me"

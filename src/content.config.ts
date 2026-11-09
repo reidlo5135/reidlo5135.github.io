@@ -15,6 +15,10 @@ const projects = defineCollection({
         order: z.number(),
         links: z.array(z.object({ label: z.string(), href: z.url() })).default([]),
         draft: z.boolean().default(false),
+        /** A sub-page of another project (its slug): left off the home grid, shown as a tab on the parent. */
+        parent: z.string().optional(),
+        /** The tab label when the project has sub-pages. */
+        tab: z.string().optional(),
     }),
 });
 

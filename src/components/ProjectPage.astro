@@ -6,7 +6,7 @@ import Mermaid from "./Mermaid.astro";
 import Panel from "./Panel.astro";
 import type { Lang } from "../i18n";
 import { STRINGS, homePath, projectPath } from "../i18n";
-import { slugOf } from "../projects";
+import { familyOf, slugOf } from "../projects";
 
 interface Props {
     readonly lang: Lang;
@@ -20,6 +20,8 @@ const t = STRINGS[lang];
 const data = project.data;
 const other: Lang = lang === "ko" ? "en" : "ko";
 const { Content } = await render(project);
+const family: CollectionEntry<"projects">[] = await familyOf(project, lang);
+const root: CollectionEntry<"projects"> = family[0] ?? project;
 ---
 
 <Base
@@ -32,7 +34,21 @@ const { Content } = await render(project);
         <a class="back" href={`${homePath(lang)}#projects`}>{t.back}</a>
         <header>
             <span class="label">{data.kind === "personal" ? t.personal : t.work}</span>
-            <h1>{data.title}</h1>
+            <h1>{root.data.title}</h1>
+            {
+                family.length > 1 && (
+                    <nav class="tabs" aria-label={root.data.title}>
+                        {family.map((page: CollectionEntry<"projects">) => (
+                            <a
+                                href={projectPath(lang, slugOf(page))}
+                                aria-current={page.id === project.id ? "page" : undefined}
+                            >
+                                {page.data.tab ?? page.data.title}
+                            </a>
+                        ))}
+                    </nav>
+                )
+            }
             <p class="summary">{data.summary}</p>
             <dl>
                 <dt class="label">{t.role}</dt>
@@ -70,6 +86,37 @@ const { Content } = await render(project);
     h1 {
         margin: 12px 0 8px;
         font-size: clamp(28px, 4.5vw, 38px);
+    }
+
+    .tabs {
+        display: flex;
+        gap: 4px;
+        margin: 4px 0 18px;
+        padding: 4px;
+        overflow-x: auto;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        background: var(--surface-2);
+        scrollbar-width: none;
+    }
+
+    .tabs a {
+        flex: none;
+        padding: 6px 14px;
+        border-radius: 7px;
+        color: var(--muted);
+        font-size: 14px;
+        text-decoration: none;
+    }
+
+    .tabs a:hover {
+        color: var(--text);
+    }
+
+    .tabs a[aria-current="page"] {
+        background: var(--surface);
+        color: var(--brand);
+        box-shadow: 0 0 0 1px var(--border);
     }
 
     .summary {
@@ -112,6 +159,43 @@ const { Content } = await render(project);
         max-width: 100%;
         border: 1px solid var(--border);
         border-radius: var(--radius);
+    }
+
+    /* Wide tables scroll inside the page instead of pushing it sideways. */
+    .body :global(table) {
+        display: block;
+        max-width: 100%;
+        margin: 16px 0 24px;
+        overflow-x: auto;
+        border-collapse: collapse;
+        font-size: 14px;
+    }
+
+    .body :global(th),
+    .body :global(td) {
+        padding: 8px 12px;
+        border-bottom: 1px solid var(--border);
+        text-align: left;
+        vertical-align: top;
+    }
+
+    .body :global(th) {
+        background: var(--surface-2);
+        color: var(--muted);
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .body :global(h3) {
+        margin-top: 28px;
+        font-size: 17px;
+    }
+
+    .body :global(blockquote) {
+        margin: 16px 0;
+        padding: 4px 16px;
+        border-left: 3px solid var(--brand);
+        color: var(--muted);
     }
 
     .body :global(code) {

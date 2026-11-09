@@ -2,11 +2,11 @@
 import type { CollectionEntry } from "astro:content";
 import type { GetStaticPaths } from "astro";
 import ProjectPage from "../../../components/ProjectPage.astro";
-import { projectsIn, slugOf } from "../../../projects";
+import { pagesIn, slugOf } from "../../../projects";
 
 export const getStaticPaths = (async () => {
-    const korean: Set<string> = new Set((await projectsIn("ko")).map(slugOf));
-    return (await projectsIn("en")).map((project: CollectionEntry<"projects">) => ({
+    const korean: Set<string> = new Set((await pagesIn("ko")).map(slugOf));
+    return (await pagesIn("en")).map((project: CollectionEntry<"projects">) => ({
         params: { slug: slugOf(project) },
         props: { project, translated: korean.has(slugOf(project)) },
     }));

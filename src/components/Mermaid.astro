@@ -32,6 +32,9 @@
                       lineColor: "#93a0a9",
                       secondaryColor: "#1a2026",
                       tertiaryColor: "#12161a",
+                      // ERD rows: the base theme paints them light, which hides light text on a dark page.
+                      attributeBackgroundColorOdd: "#12161a",
+                      attributeBackgroundColorEven: "#181e23",
                   }
                 : {
                       background: "#ffffff",
@@ -41,6 +44,8 @@
                       lineColor: "#5b666e",
                       secondaryColor: "#e8ecee",
                       tertiaryColor: "#f3f5f6",
+                      attributeBackgroundColorOdd: "#ffffff",
+                      attributeBackgroundColorEven: "#f3f5f6",
                   },
         });
         for (const pre of blocks) {
@@ -50,17 +55,85 @@
             pre.replaceWith(figure);
         }
         await mermaid.run({ querySelector: "figure.mermaid" });
+
+        // A diagram wider than the panel keeps its own size and scrolls; any diagram opens full screen.
+        const dialog: HTMLDialogElement = document.createElement("dialog");
+        dialog.className = "diagram-full";
+        dialog.addEventListener("click", (event: MouseEvent): void => {
+            if (event.target === dialog) dialog.close();
+        });
+        document.body.append(dialog);
+        const english: boolean = document.documentElement.lang === "en";
+        for (const figure of document.querySelectorAll<HTMLElement>("figure.mermaid")) {
+            const svg: SVGSVGElement | null = figure.querySelector("svg");
+            if (svg === null) continue;
+            const natural: number = parseFloat(svg.style.maxWidth) || svg.getBoundingClientRect().width;
+            svg.style.maxWidth = "none";
+            svg.style.width = `${Math.max(natural, 0)}px`;
+            figure.classList.toggle("fits", natural <= figure.clientWidth - 32);
+            const open: HTMLButtonElement = document.createElement("button");
+            open.type = "button";
+            open.className = "diagram-open";
+            open.textContent = english ? "Full screen" : "크게 보기";
+            open.addEventListener("click", (): void => {
+                dialog.replaceChildren(svg.cloneNode(true));
+                dialog.showModal();
+            });
+            figure.prepend(open);
+        }
     }
 </script>
 
 <style is:global>
     figure.diagram {
+        position: relative;
         margin: 24px 0;
-        padding: 16px;
+        padding: 40px 16px 16px;
         overflow-x: auto;
         border: 1px solid var(--border);
         border-radius: var(--radius);
-        background: var(--surface);
+        background: var(--surface-2);
+    }
+
+    figure.diagram.fits {
         text-align: center;
+    }
+
+    .diagram-open {
+        position: sticky;
+        left: 100%;
+        float: right;
+        margin: -32px 0 0;
+        padding: 4px 10px;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        background: var(--surface);
+        color: var(--muted);
+        font: inherit;
+        font-size: 12px;
+        cursor: pointer;
+    }
+
+    .diagram-open:hover {
+        color: var(--text);
+    }
+
+    dialog.diagram-full {
+        width: 96vw;
+        max-width: none;
+        height: 92vh;
+        padding: 24px;
+        overflow: auto;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        background: var(--surface);
+    }
+
+    dialog.diagram-full::backdrop {
+        background: rgb(0 0 0 / 0.6);
+    }
+
+    dialog.diagram-full svg {
+        max-width: none !important;
     }
 </style>
