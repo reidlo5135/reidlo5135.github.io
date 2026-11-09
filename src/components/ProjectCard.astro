@@ -1,0 +1,63 @@
+---
+import type { CollectionEntry } from "astro:content";
+import type { Lang } from "../i18n";
+import { STRINGS, projectPath } from "../i18n";
+import { slugOf } from "../projects";
+
+interface Props {
+    readonly lang: Lang;
+    readonly project: CollectionEntry<"projects">;
+}
+
+const { lang, project }: Props = Astro.props;
+const t = STRINGS[lang];
+const data = project.data;
+---
+
+<li class="card">
+    <a href={projectPath(lang, slugOf(project))}>
+        <span class="label">{data.kind === "personal" ? t.personal : t.work} · {data.period}</span>
+        <h3>{data.title}</h3>
+        <p>{data.summary}</p>
+        <ul class="chips">
+            {data.stack.map((item: string) => <li>{item}</li>)}
+        </ul>
+    </a>
+</li>
+
+<style>
+    .card a {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        height: 100%;
+        padding: 20px 22px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        background: var(--surface);
+        color: inherit;
+        text-decoration: none;
+        transition: border-color 0.15s;
+    }
+
+    .card a:hover,
+    .card a:focus-visible {
+        border-color: var(--brand);
+    }
+
+    h3 {
+        margin: 0;
+        font-size: 20px;
+    }
+
+    p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 15px;
+    }
+
+    .chips {
+        margin-top: auto;
+        padding-top: 8px;
+    }
+</style>

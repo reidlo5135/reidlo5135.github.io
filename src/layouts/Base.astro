@@ -1,0 +1,91 @@
+---
+import "../styles/global.css";
+import type { Lang } from "../i18n";
+import { SITE, STRINGS, homePath } from "../i18n";
+
+interface Props {
+    readonly lang: Lang;
+    readonly title: string;
+    readonly description: string;
+    /** The same page in the other language. */
+    readonly otherPath: string;
+}
+
+const { lang, title, description, otherPath }: Props = Astro.props;
+const t = STRINGS[lang];
+const home: string = homePath(lang);
+---
+
+<!doctype html>
+<html lang={lang}>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <title>{title}</title>
+        <meta name="description" content={description} />
+        <meta property="og:title" content={title} />
+        <meta property="og:description" content={description} />
+        <link rel="alternate" hreflang={lang === "ko" ? "en" : "ko"} href={otherPath} />
+    </head>
+    <body>
+        <header class="wrap top">
+            <a class="name mono" href={home}>{SITE.name}</a>
+            <nav aria-label={lang === "ko" ? "주 메뉴" : "Main"}>
+                <a href={`${home}#projects`}>{t.projects}</a>
+                <a href={`${home}#about`}>{t.about}</a>
+                <a href={otherPath} hreflang={lang === "ko" ? "en" : "ko"}>{t.otherLang}</a>
+            </nav>
+        </header>
+        <main class="wrap">
+            <slot />
+        </main>
+        <footer class="wrap bottom label">
+            <span>© {new Date().getFullYear()} {SITE.name}</span>
+            <a href={SITE.github}>GitHub</a>
+        </footer>
+    </body>
+</html>
+
+<style>
+    .top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding-block: 24px;
+    }
+
+    .name {
+        color: var(--text);
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px 18px;
+        font-size: 14px;
+    }
+
+    nav a {
+        color: var(--muted);
+        text-decoration: none;
+    }
+
+    nav a:hover {
+        color: var(--text);
+    }
+
+    main {
+        padding-bottom: 64px;
+    }
+
+    .bottom {
+        display: flex;
+        justify-content: space-between;
+        padding-block: 24px 40px;
+        border-top: 1px solid var(--border);
+    }
+</style>

@@ -1,0 +1,23 @@
+---
+import type { CollectionEntry } from "astro:content";
+import type { GetStaticPaths } from "astro";
+import ProjectPage from "../../../components/ProjectPage.astro";
+import { projectsIn, slugOf } from "../../../projects";
+
+export const getStaticPaths = (async () => {
+    const korean: Set<string> = new Set((await projectsIn("ko")).map(slugOf));
+    return (await projectsIn("en")).map((project: CollectionEntry<"projects">) => ({
+        params: { slug: slugOf(project) },
+        props: { project, translated: korean.has(slugOf(project)) },
+    }));
+}) satisfies GetStaticPaths;
+
+interface Props {
+    readonly project: CollectionEntry<"projects">;
+    readonly translated: boolean;
+}
+
+const { project, translated }: Props = Astro.props;
+---
+
+<ProjectPage lang="en" project={project} translated={translated} />

@@ -1,0 +1,83 @@
+---
+import type { CollectionEntry } from "astro:content";
+import Base from "../layouts/Base.astro";
+import ProjectCard from "./ProjectCard.astro";
+import type { Lang } from "../i18n";
+import { SITE, SKILLS, STRINGS, homePath } from "../i18n";
+import { projectsIn } from "../projects";
+
+interface Props {
+    readonly lang: Lang;
+}
+
+const { lang }: Props = Astro.props;
+const t = STRINGS[lang];
+const projects: CollectionEntry<"projects">[] = await projectsIn(lang);
+---
+
+<Base lang={lang} title={t.title} description={t.intro} otherPath={homePath(lang === "ko" ? "en" : "ko")}>
+    <section class="hero">
+        <p class="label">ROBOTICS TOOLING · ROS 2 · FULL STACK</p>
+        <h1>{t.tagline}</h1>
+        <p class="intro">{t.intro}</p>
+    </section>
+
+    <section id="projects">
+        <h2>{t.projects}</h2>
+        <ul class="grid">
+            {projects.map((project: CollectionEntry<"projects">) => <ProjectCard lang={lang} project={project} />)}
+        </ul>
+    </section>
+
+    <section id="about">
+        <h2>{t.about}</h2>
+        {t.aboutBody.map((line: string) => <p>{line}</p>)}
+        <h3 class="label">{t.skills}</h3>
+        <ul class="chips">
+            {SKILLS.map((skill: string) => <li>{skill}</li>)}
+        </ul>
+        <h3 class="label">{t.contact}</h3>
+        <p><a href={SITE.github}>github.com/reidlo5135</a></p>
+    </section>
+</Base>
+
+<style>
+    .hero {
+        padding-block: 48px 56px;
+    }
+
+    h1 {
+        margin: 8px 0 16px;
+        font-size: clamp(30px, 5vw, 44px);
+    }
+
+    .intro {
+        max-width: 640px;
+        margin: 0;
+        color: var(--muted);
+        font-size: 18px;
+    }
+
+    section + section {
+        margin-top: 56px;
+    }
+
+    h2 {
+        margin: 0 0 20px;
+        font-size: 24px;
+    }
+
+    h3.label {
+        margin: 28px 0 10px;
+        font-weight: 500;
+    }
+
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(min(100%, 380px), 1fr));
+        gap: 16px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+</style>

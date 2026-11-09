@@ -1,0 +1,124 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { render } from "astro:content";
+import Base from "../layouts/Base.astro";
+import type { Lang } from "../i18n";
+import { STRINGS, homePath, projectPath } from "../i18n";
+import { slugOf } from "../projects";
+
+interface Props {
+    readonly lang: Lang;
+    readonly project: CollectionEntry<"projects">;
+    /** Whether the other language has this project too. */
+    readonly translated: boolean;
+}
+
+const { lang, project, translated }: Props = Astro.props;
+const t = STRINGS[lang];
+const data = project.data;
+const other: Lang = lang === "ko" ? "en" : "ko";
+const { Content } = await render(project);
+---
+
+<Base
+    lang={lang}
+    title={`${data.title} — ${t.title}`}
+    description={data.summary}
+    otherPath={translated ? projectPath(other, slugOf(project)) : homePath(other)}
+>
+    <article>
+        <a class="back" href={`${homePath(lang)}#projects`}>{t.back}</a>
+        <header>
+            <span class="label">{data.kind === "personal" ? t.personal : t.work}</span>
+            <h1>{data.title}</h1>
+            <p class="summary">{data.summary}</p>
+            <dl>
+                <dt class="label">{t.role}</dt>
+                <dd>{data.role}</dd>
+                <dt class="label">{t.period}</dt>
+                <dd>{data.period}</dd>
+                <dt class="label">{t.stack}</dt>
+                <dd>
+                    <ul class="chips">
+                        {data.stack.map((item: string) => <li>{item}</li>)}
+                    </ul>
+                </dd>
+            </dl>
+            {
+                data.links.length > 0 && (
+                    <p class="links">
+                        {data.links.map((link: { label: string; href: string }) => <a href={link.href}>{link.label} ↗</a>)}
+                    </p>
+                )
+            }
+        </header>
+        <div class="body">
+            <Content />
+        </div>
+    </article>
+</Base>
+
+<style>
+    article {
+        padding-top: 16px;
+    }
+
+    .back {
+        font-size: 14px;
+        text-decoration: none;
+    }
+
+    h1 {
+        margin: 12px 0 8px;
+        font-size: clamp(28px, 4.5vw, 38px);
+    }
+
+    .summary {
+        margin: 0 0 24px;
+        color: var(--muted);
+        font-size: 18px;
+    }
+
+    dl {
+        display: grid;
+        grid-template-columns: max-content 1fr;
+        gap: 8px 20px;
+        margin: 0;
+        padding: 18px 20px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        background: var(--surface);
+    }
+
+    dd {
+        margin: 0;
+    }
+
+    .links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+    }
+
+    .body {
+        margin-top: 40px;
+    }
+
+    .body :global(h2) {
+        margin-top: 40px;
+        font-size: 22px;
+    }
+
+    .body :global(img) {
+        max-width: 100%;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+    }
+
+    .body :global(code) {
+        padding: 1px 5px;
+        border-radius: 4px;
+        background: var(--surface);
+        font-size: 0.9em;
+    }
+</style>
